@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private bool facingRight = true;
     [SerializeField] private float moveSpeed = 3.0f;
-    private float moveH, moveV;
+    private float moveH, moveV, moveInput;
 
     private void Start()
     {
@@ -19,8 +20,24 @@ public class PlayerMovement : MonoBehaviour
         moveV = Input.GetAxisRaw("Vertical") * moveSpeed;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         rb.velocity = new Vector2(moveH, moveV);
+        moveInput = Input.GetAxis("Horizontal");
+
+        if(facingRight == false && moveInput > 0)
+        {
+            Flip();
+        } else if(facingRight == true && moveInput < 0) {
+            Flip();
+        }
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 Scaler = transform.localScale;
+        Scaler.x *= -1;
+        transform.localScale = Scaler;
     }
 }
