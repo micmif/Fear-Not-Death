@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private Animator anim;
     private Rigidbody2D rb;
     private bool facingRight = true;
     [SerializeField] private float moveSpeed = 3.0f;
@@ -12,12 +13,23 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
-    private void Update() 
+    void Update() 
     {
+        // Getting Direction Presses
         moveH = Input.GetAxisRaw("Horizontal") * moveSpeed;
         moveV = Input.GetAxisRaw("Vertical") * moveSpeed;
+
+        // Setting condition for animation to play 
+        if(Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||
+        Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        {
+            anim.SetBool("isRunning", true);
+        } else {
+            anim.SetBool("isRunning", false); 
+        }
     }
 
     void FixedUpdate()
@@ -25,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(moveH, moveV);
         moveInput = Input.GetAxis("Horizontal");
 
+    // Checking if player if facing right, if they are not, player sprite is flipped using the Flip() function.
         if(facingRight == false && moveInput > 0)
         {
             Flip();

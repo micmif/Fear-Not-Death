@@ -4,27 +4,47 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-   private float timeBtwAttack;
-   public float startTimeBtwAttack;
+   public Animator anim;
+   public Transform attackPoint;
+   public LayerMask enemyLayers;
+   public float attackRange = 0.5f;
+   public int attackDamage = 40;
+    
+   public float attackRate = 2f;
+   float nextAttackTime = 0f;
 
-   public Transform attackPos;
-   public LayerMask whatIsEnemies;
-   public float attackRange;
+   void Update()
+   {
+      if(Time.time >= nextAttackTime)
+      {
+         if(Input.GetKeyDown(KeyCode.Space))
+         {
+            Attack();
+            nextAttackTime = Time.time + 1f / attackRate;
+         }
+      }
+   }
 
-//    void Update(){
-//        if(timeBtwAttack <= 0)
-//        {
-//            if(Input.GetKey(KeyCode.Space))
-//            {
-//                Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsEnemies);
-//                for (int i = 0; i < enemiesToDamage.Length; i++)
-//                {   
-//                  enemiesToDamage[i].GetComponent<Enemy>().health -= damage;  
-//                }
-//            }
-//            timeBtwAttack = startTimeBtwAttack;
-//        } else {
-//            timeBtwAttack -= Time.deltaTime;
-//        }
-//    }
+   void Attack()
+   {
+      // Plays attack animation
+      anim.SetTrigger("Attack");
+
+      // Detect enemies in a range of attack
+      Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+      // Deal damage
+      foreach(Collider2D enemy in hitEnemies)
+      {
+         enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+      }
+   }
+
+   void OnDrawGizmosSelected()
+   {
+      if(attackPoint == null)
+         return;
+
+      Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+   }
 }
