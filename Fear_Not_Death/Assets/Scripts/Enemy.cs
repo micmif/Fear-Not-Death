@@ -5,10 +5,9 @@ using Pathfinding;
 
 public class Enemy : MonoBehaviour
 {
-    public Animator animator;
+    public Animator anim;
     public int maxHealth = 100;
     int currentHealth;
-    // Start is called before the first frame update
     public AIPath aiPath;
     void Start()
         {
@@ -17,6 +16,13 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if(aiPath.desiredVelocity.x != 0)
+        {
+            anim.SetBool("isWalking", true);
+        } else {
+            anim.SetBool("isWalking", false); 
+        }
+
         if(aiPath.desiredVelocity.x >= 0.01f)
         {
             transform.localScale = new Vector3(3f, 2.5f, 1f);
@@ -30,7 +36,7 @@ public class Enemy : MonoBehaviour
     {
         currentHealth -= damage;
 
-        animator.SetTrigger("Hurt");
+        anim.SetTrigger("Hurt");
 
         if(currentHealth <=0)
         {
